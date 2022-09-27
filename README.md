@@ -23,3 +23,5 @@ Where the optional arguments are:
   -ci, --clipboard_image      image from the clipboard
   -ct, --clipboard_text       text from the clipboard
 ```
+
+It is highly recommended to include the script in the PATH of the system in order to be able to call it without having to navigate to the script's location.
