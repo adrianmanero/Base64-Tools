@@ -11,17 +11,18 @@ The resulting string (Base64 or clear text) will be automatically copied to the 
 
 The usage is: 
 ```
-b64.py [-h] [-d DECODE | -dc | -u URL | -p PATH | -ci | -ct]
+b64.py [-h] [-d DECODE | -dc | -e ENCODE | -eu ENCODE_URL | -ep ENCODE_PATH | -eci | -ect]
 ```
 Where the optional arguments are:
 ```
-  -h, --help                  show this help message and exit
-  -d TEXT, --decode TEXT      decode Base64 string
-  -dc, --decode_clipboard     decode Base64 string from clipboard
-  -u URL, --url URL           URL of the image
-  -p PATH, --path PATH        local path of the image (stored in a certain folder)
-  -ci, --clipboard_image      image from the clipboard
-  -ct, --clipboard_text       text from the clipboard
+  -h, --help                                  Show this help message and exit
+  -d DECODE, --decode DECODE                  Decode Base64 string
+  -dc, --decode_clipboard                     Decode Base64 string from clipboard
+  -e ENCODE, --encode ENCODE                  Encode string from input
+  -eu ENCODE_URL, --encode_url ENCODE_URL     Encode image from its URL
+  -ep ENCODE_PATH, --encode_path ENCODE_PATH  Encode image from local path (stored in a certain folder)
+  -eci, --encode_clipboard_image              Encode image from the clipboard
+  -ect, --encode_clipboard_text               Encode text from the clipboard
 ```
 
 It is highly recommended to include the script in the PATH of the system in order to be able to call it without having to navigate to the script's location.
