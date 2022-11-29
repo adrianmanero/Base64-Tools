@@ -15,14 +15,14 @@ b64.py [-h] [-d DECODE | -dc | -e ENCODE | -eu ENCODE_URL | -ep ENCODE_PATH | -e
 ```
 Where the optional arguments are:
 ```
-  -h, --help                                  Show this help message and exit
-  -d DECODE, --decode DECODE                  Decode Base64 string
-  -dc, --decode_clipboard                     Decode Base64 string from clipboard
-  -e ENCODE, --encode ENCODE                  Encode string from input
-  -eu ENCODE_URL, --encode_url ENCODE_URL     Encode image from its URL
-  -ep ENCODE_PATH, --encode_path ENCODE_PATH  Encode image from local path (stored in a certain folder)
-  -eci, --encode_clipboard_image              Encode image from the clipboard
-  -ect, --encode_clipboard_text               Encode text from the clipboard
+  -h,              --help                       Show this help message and exit
+  -d DECODE,        --decode DECODE             Decode Base64 string
+  -dc,              --decode_clipboard          Decode Base64 string from clipboard
+  -e ENCODE,        --encode ENCODE             Encode string from input
+  -eu ENCODE_URL,   --encode_url ENCODE_URL     Encode image from its URL
+  -ep ENCODE_PATH,  --encode_path ENCODE_PATH   Encode image from local path (stored in a certain folder)
+  -eci,             --encode_clipboard_image    Encode image from the clipboard
+  -ect,             --encode_clipboard_text     Encode text from the clipboard
 ```
 
 It is highly recommended to include the script in the PATH of the system in order to be able to call it without having to navigate to the script's location.
