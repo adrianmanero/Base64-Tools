@@ -16,14 +16,15 @@ def parse():
     # Arguments and flags
     group.add_argument('-d', '--decode', required=False, action='store', help='Decode Base64 string')
     group.add_argument('-dc', '--decode_clipboard', required=False, action='store_true', help='Decode Base64 string from clipboard')
-    group.add_argument('-u', '--url', required=False, action='store', help='URL of the image')
-    group.add_argument('-p', '--path', required=False, action='store', help='Local path of the image (stored in a certain folder)')
-    group.add_argument('-ci', '--clipboard_image', required=False, action='store_true', help='Image from the clipboard')
-    group.add_argument('-ct', '--clipboard_text', required=False, action='store_true', help='Text from the clipboard')
+    group.add_argument('-e', '--encode', required=False, action='store', help='Encode string from input')
+    group.add_argument('-eu', '--encode_url', required=False, action='store', help='Encode image from its URL')
+    group.add_argument('-ep', '--encode_path', required=False, action='store', help='Encode image from local path (stored in a certain folder)')
+    group.add_argument('-eci', '--encode_clipboard_image', required=False, action='store_true', help='Encode image from the clipboard')
+    group.add_argument('-ect', '--encode_clipboard_text', required=False, action='store_true', help='Encode text from the clipboard')
 
     args = parser.parse_args()
     
-    return args.decode, args.decode_clipboard, args.url, args.path, args.clipboard_image, args.clipboard_text
+    return args.decode, args.decode_clipboard, args.encode, args.encode_url, args.encode_path, args.encode_clipboard_image, args.encode_clipboard_text
 
 
 # Function that prints information with a certain header and length
@@ -74,7 +75,7 @@ def image_path(path):
     image = f'C://Users//adrian.manero//Pictures//Base64 Encoding//{path}'
 
     # Extension of the image to add to the final string
-    name, extension = os.path.splitext(image)
+    _, extension = os.path.splitext(image)
 
     # Open image and encode to Base64
     with open(image, 'rb') as img:
@@ -85,7 +86,7 @@ def image_path(path):
 
 
 # Image of text coming from clipboard
-def clipboard(image=False):
+def encode_from_clipboard(image=False):
     # Image
     if image:
         try:
@@ -93,11 +94,11 @@ def clipboard(image=False):
             image = ImageGrab.grabclipboard()
             img_bytes = io.BytesIO()
             image.save(img_bytes, format='PNG')
+            encode_b64(img_bytes.getvalue(), 'png')
+            # b64_string = base64.b64encode(img_bytes.getvalue())
 
-            b64_string = base64.b64encode(img_bytes.getvalue())
-
-            # Finish script
-            print_and_copy_result(b64_string, 'Base64', 'png')
+            # # Finish script
+            # print_and_copy_result(b64_string, 'Base64', 'png')
 
         except AttributeError:
             msg = f'No image has been copied. The content of the clipboard is:\n{{{pyperclip.paste()}}}'
@@ -105,38 +106,53 @@ def clipboard(image=False):
 
     # Text
     else:
-        text = pyperclip.paste()
-        text_bytes = text.encode('ascii')
-        b64_string = base64.b64encode(text_bytes)
-        print_and_copy_result(b64_string, 'Base64', None)
+        encode_b64(pyperclip.paste().encode('ascii'))
 
 
-# Function to decode string from Base46
-def decode_b64(decode, decode_cb):
+# Function to encode a string to Base64
+def encode_b64(text_bytes, extension=None):
+    b64_string = base64.b64encode(text_bytes)
+    print_and_copy_result(b64_string, 'Base64', extension)
 
-    # Choosing the source of the b64 text: command line (first option) or clipboard (second option)
-    b64 = (base64.b64decode(decode) if decode is not None else base64.b64decode(pyperclip.paste()))
+
+# Function to decode string from Base64
+def decode_b64(decode):
+    b64 = ''
+    # Choosing the source of the b64 text: command line (first option) or clipboard (second option)    
+    if decode is not None:
+        b64 = base64.b64decode(decode)
+
+    else:
+        # Checking if the string in the clipboard does not come from a b64 transformed image
+        if pyperclip.paste().startswith('data'):
+            raise Exception('The clipboard does not contain a regular b64 string, it is probably an image')
+        else:
+            b64 = base64.b64decode(pyperclip.paste())
+
     text = b64.decode('ascii')
     print_and_copy_result(text, 'Clear Text', decode=True)
 
 
 def main():
-    decode, decode_cb, url, path, cb_image, cb_text = parse()
+    decode, decode_cb, encode, enc_url, enc_path, enc_cb_image, enc_cb_text = parse()
+
+    # ENCODE FROM INPUT
+    if encode is not None: encode_b64(encode.encode('ascii'))
 
     # DECODE BASE64 STRING
-    if decode is not None or decode_cb: decode_b64(decode, decode_cb)
+    elif decode is not None or decode_cb: decode_b64(decode)
 
-    # IMAGE FROM URL
-    elif url is not None: image_url(url)
+    # ENCODE IMAGE FROM URL
+    elif enc_url is not None: image_url(enc_url)
 
-    # IMAGE FROM PATH
-    elif path is not None: image_path(path)
+    # ENCODE IMAGE FROM PATH
+    elif enc_path is not None: image_path(enc_path)
 
-    # IMAGE FROM CLIPBOARD
-    elif cb_image: clipboard(image=True)
+    # ENCODE IMAGE FROM CLIPBOARD
+    elif enc_cb_image: encode_from_clipboard(image=True)
 
-    # TEXT FROM CLIPBOARD
-    elif cb_text: clipboard(image=False)
+    # ENCODE TEXT FROM CLIPBOARD
+    elif enc_cb_text: encode_from_clipboard(image=False)
 
     # NO FLAG
     else: print_info('Please, specify a flag (use "b64 -h" o "b64 --help" to obtain help)', 'Error')
