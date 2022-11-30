@@ -56,13 +56,7 @@ def image_url(url):
 
     if response.status_code == 200:
         response.raw.decode_content = True
-        b64_string = base64.b64encode(response.content)
-        
-        # Obtaining the extension of the file
-        extension = url.split('/')[-1].split('.')[1]
-
-        # Finish script
-        print_and_copy_result(b64_string, 'Base64', extension)
+        encode_b64(response.content, url.split('/')[-1].split('.')[1])
 
     else:
         msg = f'Error while downloading the image from {url}'
@@ -95,10 +89,6 @@ def encode_from_clipboard(image=False):
             img_bytes = io.BytesIO()
             image.save(img_bytes, format='PNG')
             encode_b64(img_bytes.getvalue(), 'png')
-            # b64_string = base64.b64encode(img_bytes.getvalue())
-
-            # # Finish script
-            # print_and_copy_result(b64_string, 'Base64', 'png')
 
         except AttributeError:
             msg = f'No image has been copied. The content of the clipboard is:\n{{{pyperclip.paste()}}}'
